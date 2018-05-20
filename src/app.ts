@@ -93,10 +93,8 @@ app.use(
  */
 app.get("/", homeController.index);
 app.get("/login", userController.getLogin);
-app.get("/userstories/:id", taigaUserStoriesControler.userStoryEndpoint);
-app.get("/userstories", taigaUserStoriesControler.userStoryEndpoint);
-app.get("/projects/:id", taigaProjectsController.projectEndpoint);
-app.get("/projects", taigaProjectsController.projectEndpoint);
+app.use("/userstories", taigaUserStoriesControler.router);
+app.use("/projects", taigaProjectsController.router);
 app.post("/login", userController.postLogin);
 app.get("/logout", userController.logout);
 app.get("/forgot", userController.getForgot);

@@ -4,7 +4,10 @@ import request from "request";
 import * as taigaInterface from "../lib";
 import  { TaigaUserStory }  from "../models/TaigaUserStory";
 import { SimpleUserStory } from "../../models/SimpleUserStory";
+import express from "express";
+export const router = express.Router();
 const base_url: String = "https://api.taiga.io/api/v1";
+
 function getSimpleStory (id: number, callback: Function) {
     let taigaUserStory: TaigaUserStory = new TaigaUserStory();
     let simpleUserStory: SimpleUserStory = new SimpleUserStory();
@@ -29,18 +32,24 @@ function getProjectSimpleUserStories(project_id: String, callback: Function) {
         });
     }
 
-export let userStoryEndpoint = (req: Request, res: Response) => {
+router.use(
+    function (req: Request, res: Response, next) {
     const projectid = req.query.project;
-    if (!projectid) {
-        getSimpleStory (req.params.id,
-            function (simpleUserStories: SimpleUserStory[]) {
-                res.json(simpleUserStories);
-            });
-    }
-    else {
+    if (projectid) {
         getProjectSimpleUserStories (projectid,
             function (simpleUserStories: SimpleUserStory[]) {
                 res.send(simpleUserStories);
             });
     }
-};
+    else {
+        next();
+    }
+});
+router.get("/:id",
+    function (req: Request, res: Response, next) {
+        getSimpleStory (req.params.id,
+        function (simpleUserStories: SimpleUserStory[]) {
+            res.json(simpleUserStories);
+        });
+    }
+);
