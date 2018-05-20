@@ -24,9 +24,7 @@ import * as homeController from "./controllers/home";
 import * as userController from "./controllers/user";
 import * as apiController from "./controllers/api";
 import * as contactController from "./controllers/contact";
-import * as taigaUserStoriesControler from "./taiga-interface/controllers/user-story-controller";
-import * as taigaProjectsController from "./taiga-interface/controllers/project-controller";
-
+import * as projectManagerMiddleware from "./middleware/project-managers";
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
 
@@ -91,10 +89,8 @@ app.use(
 /**
  * Primary app routes.
  */
-app.get("/", homeController.index);
 app.get("/login", userController.getLogin);
-app.use("/userstories", taigaUserStoriesControler.router);
-app.use("/projects", taigaProjectsController.router);
+app.use("/", projectManagerMiddleware.router);
 app.post("/login", userController.postLogin);
 app.get("/logout", userController.logout);
 app.get("/forgot", userController.getForgot);
