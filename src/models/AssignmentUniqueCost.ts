@@ -11,6 +11,7 @@ export class AssignmentUniqueCost {
     userStories: UserStory[];
     startDate: Date;
     endDate: Date;
+    relationHoursPoints: number;
     constructor () {}
 
     validate(): Boolean {

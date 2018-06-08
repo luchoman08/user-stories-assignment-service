@@ -7,7 +7,7 @@ import  {
     PulpAssignmentUniqueCost,
     PulpAssignmentUniqueCostResponse,
     Task
-     }  from "../models/";
+     }  from "../models/"; 
 
 import {
     AssignmentUniqueCost
@@ -21,7 +21,7 @@ import { ServerResponse } from "http";
 import express from "express";
 export const router = express.Router();
 
-const base_url: string = "http://localhost:8002/api/v1/";
+const base_url: string = "http://task-assignment:8001/api/v1/";
 
 function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, callback: Function) {
     let pulpAssignmentUniqueCost: PulpAssignmentUniqueCost = new PulpAssignmentUniqueCost();
@@ -35,13 +35,22 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
       };
     request(options ,
         function (error, response, body) {
-
+        if (response.statusCode>201) {
+        callback(body);
+        } else {
+		if (body ) {
         pulpAssignmentUniqueCostResponse = body as PulpAssignmentUniqueCostResponse;
         assignmentUniqueCostResult =
             pulpAssignmentUniqueCostResponseToassignementUniqueCost(
                 pulpAssignmentUniqueCostResponse,
                 assignmentUniqueCost);
+                console.log(assignmentUniqueCostResult);
         callback(assignmentUniqueCostResult);
+        }
+        else {
+        callback(error);
+        }
+        }
         });
     }
 

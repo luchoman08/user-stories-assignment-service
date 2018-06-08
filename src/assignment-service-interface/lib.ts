@@ -19,7 +19,7 @@ export function assignmentUniqueCostToPulpAssignmentUniqueCost(
                 assignmentUniqueCost.developers,
                 assignmentUniqueCost.startDate,
                 assignmentUniqueCost.endDate);
-        pulpAssignmentUniqueCost.tasks = userStoriesToTasks(assignmentUniqueCost.userStories);
+        pulpAssignmentUniqueCost.tasks = userStoriesToTasks(assignmentUniqueCost.userStories, assignmentUniqueCost.relationHoursPoints);
         return pulpAssignmentUniqueCost;
     }
 
@@ -29,16 +29,18 @@ export function pulpAssignmentUniqueCostResponseToassignementUniqueCost(
 ): AssignmentUniqueCost {
     for (const id_agent in pulpAssignmentUniqueCostResponse) {
         for (const idUserStory of pulpAssignmentUniqueCostResponse[id_agent]) {
+        console.log(assignmentUniqueCost.userStories, "historias de usuario desde pulpassignment conv");
+        console.log(idUserStory, "Id historia de usuario desde pulp conv");
             assignmentUniqueCost.userStories.find(userStory => Number(userStory.id) === Number(idUserStory)).assigned_to = id_agent;
         }
     }
     return assignmentUniqueCost;
 }
 
-export function userStoryToTask(userStory: UserStory): Task {
+export function userStoryToTask(userStory: UserStory, relationHoursPoints: number): Task {
     const task = new Task();
     task.external_id = userStory.id;
-    task.cost = userStory.total_points;
+    task.cost = userStory.total_points  * relationHoursPoints;
     return task;
 }
 
@@ -49,13 +51,13 @@ export function developerToAgent(
 
     const agent: Agent = new Agent();
     agent.external_id = developer.id;
-    agent.capacity = developer.available_hours_per_week * getBusinessDatesCount(workStartDate, workEndDate);
-    console.log(agent);
+    agent.capacity = developer.available_hours_per_week / 5 * getBusinessDatesCount(workStartDate, workEndDate);
+    console.log(agent, 'agent from user stories asignment');
     return agent;
 }
 
-export function userStoriesToTasks( userStories: UserStory []): Task[] {
-    return userStories.map(userStoryToTask);
+export function userStoriesToTasks( userStories: UserStory [], relationHoursPoints: number): Task[] {
+    return userStories.map(function (element) {return userStoryToTask(element, relationHoursPoints)});
 }
 
 export function developersToAgents(
