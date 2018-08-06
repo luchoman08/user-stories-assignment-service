@@ -9,7 +9,7 @@ import {
     UserStory,
     Project,
     Sprint
-} from "../models/index";
+} from "../models";
 
 export function taigaProjectToProject(
     taigaProject: TaigaProject): Project {

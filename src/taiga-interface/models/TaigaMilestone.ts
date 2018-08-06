@@ -1,4 +1,4 @@
-import { TaigaUserStory } from "./";
+import { TaigaUserStory } from ".";
 export class TaigaMilestone {
     id: string;
     name: string;

@@ -1,5 +1,5 @@
-import { TaigaMilestone } from "./";
-import { TaigaMembership } from "./";
+import { TaigaMilestone } from ".";
+import { TaigaMembership } from ".";
 export class TaigaProject {
     id: string;
     members: TaigaMembership[];

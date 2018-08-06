@@ -1,7 +1,6 @@
 
 import { Request, Response, NextFunction } from "express";
 import request from "request";
-import * as taigaInterface from "../lib";
 
 import  {
     PulpAssignmentUniqueCost,
@@ -17,7 +16,6 @@ import {
     assignmentUniqueCostToPulpAssignmentUniqueCost,
     pulpAssignmentUniqueCostResponseToassignementUniqueCost
  } from "../lib";
-import { ServerResponse } from "http";
 import express from "express";
 export const router = express.Router();
 

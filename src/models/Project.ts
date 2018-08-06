@@ -1,5 +1,5 @@
 
-import { Developer, UserStory, Sprint } from "./";
+import { Developer, UserStory, Sprint } from ".";
 export class Project  {
     id: string;
     created_date: string; // long format

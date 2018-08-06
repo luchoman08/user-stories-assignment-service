@@ -2,8 +2,8 @@
 import { Request, Response, NextFunction } from "express";
 import request from "request";
 import * as taigaInterface from "../lib";
-import  { TaigaProject }  from "../models/";
-import { Project } from "../../models/";
+import  { TaigaProject }  from "../models";
+import { Project } from "../../models";
 import { taigaProjectsToProjects } from "../lib";
 import { ServerResponse } from "http";
 import express from "express";

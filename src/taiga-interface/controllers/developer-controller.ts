@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import request from "request";
 import * as taigaInterface from "../lib";
-import  { TaigaMembership }  from "../models/";
+import  { TaigaMembership }  from "../models";
 import { taigaMembershipsToDevelopers, taigaMembershipToDeveloper } from "../lib";
 import { ServerResponse } from "http";
 import express from "express";

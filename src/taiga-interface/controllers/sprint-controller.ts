@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import request from "request";
 import * as taigaInterface from "../lib";
-import  { TaigaMilestone }  from "../models/";
-import { Sprint } from "../../models/";
+import  { TaigaMilestone }  from "../models";
+import { Sprint } from "../../models";
 import express from "express";
 import { taigaMilestonesToSprints, taigaMilestoneToSprint } from "../lib";
 export const router = express.Router();

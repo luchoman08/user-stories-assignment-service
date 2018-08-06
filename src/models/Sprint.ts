@@ -1,4 +1,4 @@
-import { UserStory } from "./";
+import { UserStory } from ".";
 
 export class Sprint {
     id: string;
