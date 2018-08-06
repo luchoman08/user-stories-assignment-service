@@ -3,13 +3,13 @@ import {
     Task,
     Agent,
     PulpAssignmentUniqueCostResponse
- } from "./models/";
+ } from "./models";
 
 import {
     AssignmentUniqueCost,
     Developer,
     UserStory
-     } from "../models/";
+     } from "../models";
 
 export function assignmentUniqueCostToPulpAssignmentUniqueCost(
     assignmentUniqueCost: AssignmentUniqueCost): PulpAssignmentUniqueCost {
