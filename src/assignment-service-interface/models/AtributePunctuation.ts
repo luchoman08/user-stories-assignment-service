@@ -1,4 +1,4 @@
 export class AtributePunctuation {
-    external_id: string ;
-    punctuation: string;
+    external_id: number ;
+    punctuation: number;
 }
