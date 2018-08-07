@@ -6,7 +6,7 @@ import  {
     PulpAssignmentUniqueCost,
     PulpAssignmentUniqueCostResponse,
     Task
-     }  from "../models/"; 
+     }  from "../models"; 
 
 import {
     AssignmentUniqueCost
