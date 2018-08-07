@@ -26,6 +26,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
     let pulpAssignmentUniqueCostResponse: PulpAssignmentUniqueCostResponse = new PulpAssignmentUniqueCostResponse();
     let assignmentUniqueCostResult: AssignmentUniqueCost = new AssignmentUniqueCost();
     pulpAssignmentUniqueCost = assignmentUniqueCostToPulpAssignmentUniqueCost(assignmentUniqueCost);
+    console.log(JSON.stringify(pulpAssignmentUniqueCost), 'asignacion unico costo de pulp');
     const options = {
         uri: base_url + "uniquecostassign/",
         method: "POST",
@@ -36,7 +37,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
         if (response.statusCode>201) {
         callback(body);
         } else {
-		if (body ) {
+		if ( body ) {
         pulpAssignmentUniqueCostResponse = body as PulpAssignmentUniqueCostResponse;
         assignmentUniqueCostResult =
             pulpAssignmentUniqueCostResponseToassignementUniqueCost(
@@ -53,7 +54,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
     }
 
 
-router.post("/uniquecostassign",
+router.post("/",
     function (req: Request, res: Response, next) {
         getAssignmentUniqueCost (req.body as AssignmentUniqueCost,
             function (assignmentUniqueCost: AssignmentUniqueCost) {
