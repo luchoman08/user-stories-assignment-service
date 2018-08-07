@@ -4,6 +4,7 @@ import express from "express";
 // Controllers (route handlers)
 
 import * as assignmentController from "./assignment-service-interface/controllers/assignment-unique-cost-controller";
+import * as assignmentByAttribute from "./assignment-service-interface/controllers/assignment-by-attributes-controler";
 // API keys and Passport configuration
  
 
@@ -20,7 +21,8 @@ app.set("port", process.env.PORT || 3001);
  * Primary app routes.
  */
 
-app.use("/", assignmentController.router);
+app.use("/uniquecostassign", assignmentController.router);
+app.use("/attributeassign", assignmentByAttribute.router);
 
 
 
