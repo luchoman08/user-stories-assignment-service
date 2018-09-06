@@ -111,7 +111,9 @@ export function developersToAgents(
         }
     );
 }
-
+/*
+	The 
+*/
 export function developerToAgentWithAttributes(developer: Developer): AgentWithAttributes {
     let agentWithAttributes = new AgentWithAttributes();
     agentWithAttributes.external_id = developer.id;
