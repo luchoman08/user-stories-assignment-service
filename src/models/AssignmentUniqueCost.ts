@@ -12,6 +12,7 @@ export class AssignmentUniqueCost {
     startDate: Date;
     endDate: Date;
     relationHoursPoints: number;
+    assign_same_quantity_of_tasks: boolean;
     constructor () {}
 
     validate(): Boolean {

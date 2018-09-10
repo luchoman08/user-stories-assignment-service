@@ -1,22 +1,31 @@
 import {
     PulpAssignmentUniqueCost,
     PulpAssignmentWithAttributes,
+    PulpAssignmentWithPairs,
+    PulpAssignmentWithPairsResponse,
     PulpAssignmentUniqueCostResponse,
     PulpAssignmentWithAttributesResponse,
     Task,
     TaskWithAtributes,
     Agent,
-    AgentWithAttributes
+    AgentWithAttributes,
+    PulpAssignmentTaskGroupsResponse
 } from "./models";
 
 import {
     AssignmentUniqueCost,
     AssignmentByPunctuation,
+    AssignmentWithPairs,
     Developer,
-    UserStory
+    DeveloperPair,
+    UserStory,
+    UserStoryGroup
 } from "../models";
 import { Punctuation } from "../models/Punctuation";
 import { AtributePunctuation } from "./models/AtributePunctuation";
+import { TaskGroup } from "./models/TaskGroup";
+import { AssignmentByUserStoryGroups } from "../models/AssignmentByUserStoryGroups";
+import { PulpAssignmentTaskGroups } from "./models/PulpAssignmentTaskGroups";
 
 
 export function assignmentUniqueCostToPulpAssignmentUniqueCost(
@@ -67,6 +76,111 @@ export function pulpAssignmentWithAttributesResponseToassignementByPunctuations(
     }
     return assignmentByPunctuations;
 }
+
+export function userStoryGroupToTaskGroup(userStoryGroup: UserStoryGroup): TaskGroup {
+    const taskGroup = new TaskGroup();
+    const user_Story_ids = userStoryGroup.user_stories.map(user_story => user_story.id);
+    taskGroup.external_id = userStoryGroup.id;
+    taskGroup.task_ids = user_Story_ids;
+    return taskGroup;
+}
+export function userStoryGroupsToTaskGroups(userStoryGroups: UserStoryGroup[]): TaskGroup[] {
+    return userStoryGroups.map(userStoryGroupToTaskGroup);
+}
+
+export function pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups(
+    pulpAssignmentTaskGroupResponse: PulpAssignmentTaskGroupsResponse,
+    assignmentByUserStoryGroups: AssignmentByUserStoryGroups
+): AssignmentByUserStoryGroups {
+    for (const id_agent in pulpAssignmentTaskGroupResponse.assignments) {
+        for (const idUserStory of pulpAssignmentTaskGroupResponse.assignments[id_agent]) {
+            assignmentByUserStoryGroups.userStories.find(
+                userStory => Number(userStory.id) === Number(idUserStory)).assigned_to = id_agent;
+        }
+    }
+    return assignmentByUserStoryGroups;
+}
+export function pulpAssignmentWithPairsResponseToassignmentWithPairs(
+    pulpAssignmentWithPairsResponse: PulpAssignmentWithPairsResponse,
+    assignmentWithPairs: AssignmentWithPairs
+): AssignmentWithPairs {
+    console.log('pulpAssignmentWithPairsResponse', pulpAssignmentWithPairsResponse)
+    for (const idPair in pulpAssignmentWithPairsResponse.assignments) {
+        for( const idUserStory of pulpAssignmentWithPairsResponse.assignments[idPair]) {
+            assignmentWithPairs.userStories.find(
+                userStory => {
+                    return Number(userStory.id) === Number(idUserStory);
+                }
+            ).assigned_to = pulpAssignmentWithPairsResponse.pairs[idPair];
+        }
+    }
+    assignmentWithPairs.reverse = assignmentWithPairs.reverse;
+    assignmentWithPairs.pairs = pulpAgentPairsToDeveloperPairs(pulpAssignmentWithPairsResponse.pairs, assignmentWithPairs.developers);
+    return assignmentWithPairs;
+}
+/**
+ * Convertion of a pulp agent pair to developer pair
+ * @param pulpAgentPair A pulp developer pair is an array of size 2 with the agents id
+ */ 
+export function pulpAgentPairToDeveloperPair(
+    pulpAgentPair: Array<string>,
+    developers: Developer[]
+): DeveloperPair {
+    let developerPair = new DeveloperPair();
+    developerPair.developer1 = developers.find(developer => String(developer.id) === String(pulpAgentPair[0])) || null;
+    developerPair.developer2 = developers.find(developer => String(developer.id) === String(pulpAgentPair[1])) || null;
+    developerPair.calculate_compatibility();
+    return developerPair;
+}
+
+export function pulpAgentPairsToDeveloperPairs (
+    pulpAgentPairs: {[id_pair: string]: string[]},
+    developers: Developer[]
+): DeveloperPair[] {
+    let pulpAgentPairIDs = Object.keys(pulpAgentPairs);
+    let pulpAgentPairValues = pulpAgentPairIDs.map( id => pulpAgentPairs[id]);
+    console.log(developers);
+    return pulpAgentPairValues.map(function(pulpAgentPair){
+        return pulpAgentPairToDeveloperPair(pulpAgentPair, developers);
+    });
+}
+
+export function assignmentWithPairstoPulpAssignmentWithPairs(
+    assignmentWithPairs: AssignmentWithPairs
+): PulpAssignmentWithPairs {
+    const pulpAssignmentWithPairs = new PulpAssignmentWithPairs();
+    pulpAssignmentWithPairs.agents = developersToAgentsWithAttributes(assignmentWithPairs.developers);
+    pulpAssignmentWithPairs.tasks = userStoriesToTaskWithAttributes(assignmentWithPairs.userStories);
+    pulpAssignmentWithPairs.reverse = assignmentWithPairs.reverse;
+    return pulpAssignmentWithPairs;
+}
+
+
+
+export function assignmentByUserStoryGroupsToPulpAssignmentTaskGroup(
+    assignmentByUserStoryGroups: AssignmentByUserStoryGroups
+): PulpAssignmentTaskGroups {
+    const pulpAssignmentTaskGroup = new PulpAssignmentTaskGroups ();
+    pulpAssignmentTaskGroup.agents = developersToAgents(assignmentByUserStoryGroups.developers, assignmentByUserStoryGroups.startDate, assignmentByUserStoryGroups.endDate);
+    pulpAssignmentTaskGroup.tasks = userStoriesToTasks(assignmentByUserStoryGroups.userStories, assignmentByUserStoryGroups.relationHoursPoints);
+    pulpAssignmentTaskGroup.assign_same_quantity_of_tasks = assignmentByUserStoryGroups.assign_same_quantity_of_tasks;
+    pulpAssignmentTaskGroup.groups = userStoryGroupsToTaskGroups(assignmentByUserStoryGroups.user_stories_group);
+    return pulpAssignmentTaskGroup;
+}
+
+
+export function taskGroupToUserStoryGroup(taskGroup: TaskGroup, userStories: UserStory[]): UserStoryGroup {
+    const userStoryGroup = new UserStoryGroup();
+    const user_stories_in_group = new Array<UserStory>();
+    userStoryGroup.id = taskGroup.external_id;
+    for(const task_id in taskGroup.task_ids) {
+        let userStory = userStories.find(userStory=> userStory.id === task_id);
+        user_stories_in_group.push(userStory);
+    }
+    userStoryGroup.user_stories = user_stories_in_group; 
+    return userStoryGroup;
+}
+
 export function userStoryToTaskWithAttributes(userStory: UserStory): TaskWithAtributes {
     const taskWithAttributes = new TaskWithAtributes();
     taskWithAttributes.external_id = userStory.id;
@@ -97,8 +211,8 @@ export function developerToAgent(
 
     const agent: Agent = new Agent();
     agent.external_id = developer.id;
+    console.log("developer.available_hours_per_week", workStartDate, workEndDate);
     agent.capacity = developer.available_hours_per_week / 5 * getBusinessDatesCount(workStartDate, workEndDate);
-    console.log(agent, 'agent from user stories asignment');
     return agent;
 }
 export function developersToAgents(

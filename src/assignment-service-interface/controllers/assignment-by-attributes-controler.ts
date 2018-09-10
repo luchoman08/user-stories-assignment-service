@@ -1,15 +1,14 @@
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import request from "request";
 
 import  {
     PulpAssignmentWithAttributes,
-    PulpAssignmentWithAttributesResponse,
-    Task
+    PulpAssignmentWithAttributesResponse
      }  from "../models"; 
 
 import {
-    AssignmentByPunctuation
+    AssignmentByPunctuation 
 } from "../../models";
 
 import {
@@ -33,7 +32,7 @@ function getAssignmentUniqueCost (assignmentByPunctuation: AssignmentByPunctuati
         json: pulpAssignmentWithAttributes
       };
     request(options ,
-        function (error, response, body) {
+        function (error: any, response: any, body: any) {
         if (response.statusCode>201) {
         callback(body);
         } else {
@@ -45,7 +44,7 @@ function getAssignmentUniqueCost (assignmentByPunctuation: AssignmentByPunctuati
                 assignmentByPunctuation);
                 console.log(assignmentUniqueCostResult);
         callback(assignmentUniqueCostResult);
-        }
+        } 
         else {
         callback(error);
         }
@@ -55,7 +54,7 @@ function getAssignmentUniqueCost (assignmentByPunctuation: AssignmentByPunctuati
 
 
 router.post("/",
-    function (req: Request, res: Response, next) {
+    function (req: Request, res: Response) {
         getAssignmentUniqueCost (req.body as AssignmentByPunctuation,
             function (assignmentUniqueCost: AssignmentByPunctuation) {
                 res.json(assignmentUniqueCost);

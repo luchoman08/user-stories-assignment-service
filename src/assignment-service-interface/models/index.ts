@@ -6,3 +6,7 @@ export * from "./PulpAssginmentWithAttributes";
 export * from './TaskWithAtributes';
 export * from "./AgentWithAttributes";
 export * from "./PulpAssignmentWithAttributesResponse";
+export * from "./PulpAssignmentTaskGroupsResponse";
+export * from "./PulpAssignmentTaskGroups";
+export * from "./PulpAssignmentWithPairs";
+export * from "./PulpAssignmentWithPairsResponse";

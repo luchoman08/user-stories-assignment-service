@@ -1,8 +1,8 @@
 import { AgentWithAttributes } from "./AgentWithAttributes";
 import { TaskWithAtributes } from "./TaskWithAtributes";
 
-export class PulpAssignmentWithAttributes  {
+export class PulpAssignmentWithPairs  {
     tasks: TaskWithAtributes[];
     agents: AgentWithAttributes[];
-    assign_same_quantity_of_tasks: boolean;
+    reverse: boolean;
 }

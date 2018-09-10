@@ -39,7 +39,6 @@ function getProjectDevelopers(project_id: String, callback: Function) {
 
 router.use (
     function (req: Request, res: Response, next)  {
-        console.log(req.url);
     const project = req.query.project;
     if (project) {
         getProjectDevelopers (project,

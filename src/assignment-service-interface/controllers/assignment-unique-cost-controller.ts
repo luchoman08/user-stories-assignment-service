@@ -1,12 +1,11 @@
 
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import request from "request";
 
 import  {
     PulpAssignmentUniqueCost,
-    PulpAssignmentUniqueCostResponse,
-    Task
-     }  from "../models"; 
+    PulpAssignmentUniqueCostResponse
+}  from "../models"; 
 
 import {
     AssignmentUniqueCost
@@ -33,7 +32,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
         json: pulpAssignmentUniqueCost
       };
     request(options ,
-        function (error, response, body) {
+        function (error: any, response: any, body: any) {
         if (response.statusCode>201) {
         callback(body);
         } else {
@@ -43,7 +42,6 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
             pulpAssignmentUniqueCostResponseToassignementUniqueCost(
                 pulpAssignmentUniqueCostResponse,
                 assignmentUniqueCost);
-                console.log(assignmentUniqueCostResult);
         callback(assignmentUniqueCostResult);
         }
         else {
@@ -55,7 +53,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
 
 
 router.post("/",
-    function (req: Request, res: Response, next) {
+    function (req: Request, res: Response) {
         getAssignmentUniqueCost (req.body as AssignmentUniqueCost,
             function (assignmentUniqueCost: AssignmentUniqueCost) {
                 res.json(assignmentUniqueCost);

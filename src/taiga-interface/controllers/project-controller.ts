@@ -52,7 +52,6 @@ function getProjectsByMemberId(member_id: String, callback: Function) {
 
 router.use (
     function (req: Request, res: Response, next)  {
-        console.log(req.url);
     const member = req.query.member;
     const slug = req.query.slug;
     if (member) {
@@ -62,7 +61,6 @@ router.use (
             });
     }
     else if (slug) {
-        console.log(slug);
         getProjectBySlug (slug,
             function (project: Project) {
                 res.json(project);

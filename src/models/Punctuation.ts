@@ -1,5 +1,5 @@
 export class Punctuation {
-    id: number;
+    id: string;
     name: string;
     value: number;
     

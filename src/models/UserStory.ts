@@ -4,7 +4,7 @@ export class UserStory {
     id: string;
     total_points: number;
     subject: string;
-    assigned_to: string; // Developer than is assigned to
+    assigned_to: string | string[]; // Developer than is assigned to
     punctuations: Punctuation[];
     constructor() {}
 }
