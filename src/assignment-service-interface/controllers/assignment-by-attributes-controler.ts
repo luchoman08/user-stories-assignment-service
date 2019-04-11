@@ -10,7 +10,7 @@ import  {
 import {
     AssignmentByPunctuation 
 } from "../../models";
-
+import { config } from "../conf";
 import {
     assignmentWithAttributesToPulpAssignmentWithAttributes,
     pulpAssignmentWithAttributesResponseToassignementByPunctuations
@@ -18,7 +18,7 @@ import {
 import express from "express";
 export const router = express.Router();
 
-const base_url: string = "http://task-assignment:8001/api/v1/";
+const base_url: string = config.taskAssignmentServiceUrl;
 
 function getAssignmentUniqueCost (assignmentByPunctuation: AssignmentByPunctuation, callback: Function) {
     let pulpAssignmentWithAttributes: PulpAssignmentWithAttributes = new PulpAssignmentWithAttributes();

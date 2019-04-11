@@ -11,7 +11,7 @@ import  {
 import {
     AssignmentByUserStoryGroups
 } from "../../models";
-
+import { config } from "../conf";
 import {
     assignmentByUserStoryGroupsToPulpAssignmentTaskGroup,
     pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups
@@ -19,7 +19,7 @@ import {
 import express from "express";
 export const router = express.Router();
 
-const base_url: string = "http://task-assignment:8001/api/v1/";
+const base_url: string = config.taskAssignmentServiceUrl;
 
 function getAssignmentTaskGroup (assignmentTaskGroup: AssignmentByUserStoryGroups, callback: Function) {
     let pulpAssignmentTaskGroup: PulpAssignmentTaskGroups = new PulpAssignmentTaskGroups();
