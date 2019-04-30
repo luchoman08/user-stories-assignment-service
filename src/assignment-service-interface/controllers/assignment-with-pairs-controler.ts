@@ -1,25 +1,37 @@
 
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import request from "request";
+import * as rp from "request-promise";
 
 import  {
     PulpAssignmentWithPairs,
-    PulpAssignmentWithPairsResponse
-     }  from "../models"; 
+    PulpAssignmentWithPairsResponse,
+    PulpPairGenerationResponse
+     }  from "../models";
 
 import {
-    AssignmentWithPairs 
+    AssignmentWithPairs
 } from "../../models";
 import { config } from "../conf";
 import {
     assignmentWithPairstoPulpAssignmentWithPairs,
-    pulpAssignmentWithPairsResponseToassignmentWithPairs
+    pulpAssignmentWithPairsResponseToassignmentWithPairs,
+    pulpPairGenerationResponseToDeveloperPairs
  } from "../lib";
 import express from "express";
-export const router = express.Router();
+import { DeveloperPair, PairGenerationInput } from "../../models/";
+import { pairGenerationInputToPulpPairGenerationInput } from "../lib";
 
+export const routerPairAssign = express.Router();
+
+export const routerPairGeneration = express.Router();
 const base_url: string = config.taskAssignmentServiceUrl;
-
+async function getPairs(pairGenerationInput: PairGenerationInput): Promise<DeveloperPair[]> {
+    const pulpPairGenerationInput = pairGenerationInputToPulpPairGenerationInput(pairGenerationInput);
+    const pulpPairsResponse = <PulpPairGenerationResponse>  await rp.post(base_url + "makepairs/", {json: pulpPairGenerationInput} );
+    const developerPairs = pulpPairGenerationResponseToDeveloperPairs(pulpPairsResponse, pairGenerationInput.developers);
+    return developerPairs;
+}
 function getAssignmentWithPairs (assignmentWithPairs: AssignmentWithPairs, callback: Function) {
     let pulpAssignmentWithPairs = new PulpAssignmentWithPairs();
     let pulpAssignmentWithPairsResponse: PulpAssignmentWithPairsResponse = new PulpAssignmentWithPairsResponse();
@@ -33,9 +45,9 @@ function getAssignmentWithPairs (assignmentWithPairs: AssignmentWithPairs, callb
     request(options ,
         function (error: any, response: any, body: any) {
             if ( !response ) {
-                callback({'error': 'The task assignment service is down'})
+                callback({"error": "The task assignment service is down"});
             }
-            if (response.statusCode>201) {
+            if (response.statusCode > 201) {
                 callback(body);
             } else {
                 if ( body ) {
@@ -45,7 +57,7 @@ function getAssignmentWithPairs (assignmentWithPairs: AssignmentWithPairs, callb
                         pulpAssignmentWithPairsResponse,
                         assignmentWithPairs);
                 callback(assignmentPairResult);
-            } 
+            }
             else {
                 callback(error);
             }
@@ -54,12 +66,22 @@ function getAssignmentWithPairs (assignmentWithPairs: AssignmentWithPairs, callb
     }
 
 
-router.post("/",
+routerPairAssign.post("/",
     function (req: Request, res: Response) {
         getAssignmentWithPairs (req.body as AssignmentWithPairs,
             function (assignmentUniqueCost: AssignmentWithPairs) {
                 res.json(assignmentUniqueCost);
             }
         );
+    }
+);
+routerPairGeneration.post("/",
+    async function (req: Request, res: Response, next: NextFunction) {
+        try {
+            const pairs = await getPairs(req.body as PairGenerationInput);
+            res.json(pairs);
+        } catch (e) {
+            next(e);
+        }
     }
 );

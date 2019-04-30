@@ -9,8 +9,11 @@ import {
     TaskWithAtributes,
     Agent,
     AgentWithAttributes,
-    PulpAssignmentTaskGroupsResponse
+    PulpAssignmentTaskGroupsResponse,
+    PulpPairGenerationInput,
+    PulpPairGenerationResponse
 } from "./models";
+const uuidv1 = require("uuid/v1");
 
 import {
     AssignmentUniqueCost,
@@ -19,7 +22,8 @@ import {
     Developer,
     DeveloperPair,
     UserStory,
-    UserStoryGroup
+    UserStoryGroup,
+    PairGenerationInput
 } from "../models";
 import { Punctuation } from "../models/Punctuation";
 import { AtributePunctuation } from "./models/AtributePunctuation";
@@ -39,13 +43,23 @@ export function assignmentUniqueCostToPulpAssignmentUniqueCost(
     pulpAssignmentUniqueCost.tasks = userStoriesToTasks(assignmentUniqueCost.userStories, assignmentUniqueCost.relationHoursPoints);
     return pulpAssignmentUniqueCost;
 }
+
+export function pairGenerationInputToPulpPairGenerationInput(
+    pairGenerationInput: PairGenerationInput
+): PulpPairGenerationInput {
+    const pulpPairGenerationInput = new PulpPairGenerationInput();
+    pulpPairGenerationInput.reverse = pairGenerationInput.reverse;
+    pulpPairGenerationInput.agents = developersToAgentsWithAttributes(pairGenerationInput.developers);
+    return pulpPairGenerationInput;
+}
+
 export function assignmentWithAttributesToPulpAssignmentWithAttributes
     (assignmentByPunctuation: AssignmentByPunctuation): PulpAssignmentWithAttributes {
     const pulpAssignmentWithAttributes: PulpAssignmentWithAttributes = new PulpAssignmentWithAttributes();
     pulpAssignmentWithAttributes.agents = developersToAgentsWithAttributes(assignmentByPunctuation.developers);
     pulpAssignmentWithAttributes.tasks = userStoriesToTaskWithAttributes(assignmentByPunctuation.userStories);
     pulpAssignmentWithAttributes.assign_same_quantity_of_tasks = assignmentByPunctuation.assign_same_quantity_of_tasks;
-    return pulpAssignmentWithAttributes; 
+    return pulpAssignmentWithAttributes;
 }
 export function pulpAssignmentUniqueCostResponseToassignementUniqueCost(
     pulpAssignmentUniqueCostResponse: PulpAssignmentUniqueCostResponse,
@@ -100,13 +114,20 @@ export function pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups(
     }
     return assignmentByUserStoryGroups;
 }
+
+export function pulpPairGenerationResponseToDeveloperPairs(
+    pulpGenerationResponse: PulpPairGenerationResponse,
+    developers: Developer[]
+): DeveloperPair[] {
+    const pairs = pulpAgentPairsToDeveloperPairs(pulpGenerationResponse.pairs, developers);
+    return pairs;
+}
 export function pulpAssignmentWithPairsResponseToassignmentWithPairs(
     pulpAssignmentWithPairsResponse: PulpAssignmentWithPairsResponse,
     assignmentWithPairs: AssignmentWithPairs
 ): AssignmentWithPairs {
-    console.log('pulpAssignmentWithPairsResponse', pulpAssignmentWithPairsResponse)
     for (const idPair in pulpAssignmentWithPairsResponse.assignments) {
-        for( const idUserStory of pulpAssignmentWithPairsResponse.assignments[idPair]) {
+        for ( const idUserStory of pulpAssignmentWithPairsResponse.assignments[idPair]) {
             assignmentWithPairs.userStories.find(
                 userStory => {
                     return Number(userStory.id) === Number(idUserStory);
@@ -121,12 +142,13 @@ export function pulpAssignmentWithPairsResponseToassignmentWithPairs(
 /**
  * Convertion of a pulp agent pair to developer pair
  * @param pulpAgentPair A pulp developer pair is an array of size 2 with the agents id
- */ 
+ */
 export function pulpAgentPairToDeveloperPair(
     pulpAgentPair: Array<string>,
     developers: Developer[]
 ): DeveloperPair {
-    let developerPair = new DeveloperPair();
+    const developerPair = new DeveloperPair();
+    developerPair.id = uuidv1();
     developerPair.developer1 = developers.find(developer => String(developer.id) === String(pulpAgentPair[0])) || null;
     developerPair.developer2 = developers.find(developer => String(developer.id) === String(pulpAgentPair[1])) || null;
     developerPair.calculate_compatibility();
@@ -137,10 +159,10 @@ export function pulpAgentPairsToDeveloperPairs (
     pulpAgentPairs: {[id_pair: string]: string[]},
     developers: Developer[]
 ): DeveloperPair[] {
-    let pulpAgentPairIDs = Object.keys(pulpAgentPairs);
-    let pulpAgentPairValues = pulpAgentPairIDs.map( id => pulpAgentPairs[id]);
+    const pulpAgentPairIDs = Object.keys(pulpAgentPairs);
+    const pulpAgentPairValues = pulpAgentPairIDs.map( id => pulpAgentPairs[id]);
     console.log(developers);
-    return pulpAgentPairValues.map(function(pulpAgentPair){
+    return pulpAgentPairValues.map(function(pulpAgentPair) {
         return pulpAgentPairToDeveloperPair(pulpAgentPair, developers);
     });
 }
@@ -173,11 +195,11 @@ export function taskGroupToUserStoryGroup(taskGroup: TaskGroup, userStories: Use
     const userStoryGroup = new UserStoryGroup();
     const user_stories_in_group = new Array<UserStory>();
     userStoryGroup.id = taskGroup.external_id;
-    for(const task_id in taskGroup.task_ids) {
-        let userStory = userStories.find(userStory=> userStory.id === task_id);
+    for (const task_id in taskGroup.task_ids) {
+        const userStory = userStories.find(userStory => userStory.id === task_id);
         user_stories_in_group.push(userStory);
     }
-    userStoryGroup.user_stories = user_stories_in_group; 
+    userStoryGroup.user_stories = user_stories_in_group;
     return userStoryGroup;
 }
 
@@ -193,7 +215,7 @@ export function userStoriesToTaskWithAttributes(userStories: UserStory[]): TaskW
 function punctuationToTaskPunctuation(punctuation: Punctuation): AtributePunctuation {
     const attributePunctuation = new AtributePunctuation();
     attributePunctuation.external_id = punctuation.id;
-    attributePunctuation.punctuation = punctuation.value? punctuation.value: 0;
+    attributePunctuation.punctuation = punctuation.value ? punctuation.value : 0;
     return attributePunctuation;
 }
 function punctuationsToPulpPunctuations(punctuations: Punctuation[]): AtributePunctuation[] {
@@ -202,7 +224,7 @@ function punctuationsToPulpPunctuations(punctuations: Punctuation[]): AtributePu
 
 
 export function userStoriesToTasks(userStories: UserStory[], relationHoursPoints: number): Task[] {
-    return userStories.map(function (element) { return userStoryToTask(element, relationHoursPoints) });
+    return userStories.map(function (element) { return userStoryToTask(element, relationHoursPoints); });
 }
 export function developerToAgent(
     developer: Developer,
@@ -226,10 +248,10 @@ export function developersToAgents(
     );
 }
 /*
-	The 
+	The
 */
 export function developerToAgentWithAttributes(developer: Developer): AgentWithAttributes {
-    let agentWithAttributes = new AgentWithAttributes();
+    const agentWithAttributes = new AgentWithAttributes();
     agentWithAttributes.external_id = developer.id;
     agentWithAttributes.attributes_punctuation = punctuationsToPulpPunctuations(developer.punctuations);
     return agentWithAttributes;

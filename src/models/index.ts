@@ -1,6 +1,6 @@
 export * from "./Developer";
 export * from "./Project";
-export * from './DeveloperPair';
+export * from "./DeveloperPair";
 export * from "./Sprint";
 export * from "./UserStory";
 export * from "./AssignmentUniqueCost";
@@ -8,3 +8,4 @@ export * from "./AssignmentByPunctuations";
 export * from "./UserStoryGroup";
 export * from "./AssignmentByUserStoryGroups";
 export * from "./AssignmentWithPairs";
+export * from "./PairGenerationInput";
