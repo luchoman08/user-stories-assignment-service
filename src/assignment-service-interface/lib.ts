@@ -149,8 +149,8 @@ export function pulpAgentPairToDeveloperPair(
 ): DeveloperPair {
     const developerPair = new DeveloperPair();
     developerPair.id = uuidv1();
-    developerPair.developer1 = developers.find(developer => String(developer.id) === String(pulpAgentPair[0])) || null;
-    developerPair.developer2 = developers.find(developer => String(developer.id) === String(pulpAgentPair[1])) || null;
+    developerPair.developer1 = developers.find(developer => String(developer.id) === String(pulpAgentPair[0])) || undefined;
+    developerPair.developer2 = developers.find(developer => String(developer.id) === String(pulpAgentPair[1])) || undefined;
     developerPair.calculate_compatibility();
     return developerPair;
 }

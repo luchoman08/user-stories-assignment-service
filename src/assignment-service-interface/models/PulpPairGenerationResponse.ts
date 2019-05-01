@@ -1,6 +1,6 @@
 
 export class PulpPairGenerationResponse  {
-    /** Example: [
+    /* Example: [
         [
             1,
             4

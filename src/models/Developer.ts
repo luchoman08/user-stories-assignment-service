@@ -7,6 +7,6 @@ export class Developer {
     available_hours_per_week: number;
     color: string;
     punctuations: Punctuation[];
-    static default_id = '11111111111111';
+    static default_id = "11111111111111";
     constructor() {}
 }

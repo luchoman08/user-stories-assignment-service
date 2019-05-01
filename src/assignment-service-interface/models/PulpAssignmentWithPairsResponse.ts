@@ -1,7 +1,7 @@
 import { PulpAssignmentUniqueCostResponse } from "./PulpAssignmentUniqueCostResponse";
 
 export class PulpAssignmentWithPairsResponse  {
-    /** Example: [
+    /* Example: [
         [
             1,
             4
@@ -13,5 +13,5 @@ export class PulpAssignmentWithPairsResponse  {
     ] */
     pairs: {[id_pair: string]: string[]}; // list of lists of size 2
     /** Id of pair is given by its index in array `this.pairs` */
-    assignments:  {[id_pair: string]: string[] }; // idPair: (tasksAssigned)
+    assignments: {[id_pair: string]: string[] }; // idPair: (tasksAssigned)
 }

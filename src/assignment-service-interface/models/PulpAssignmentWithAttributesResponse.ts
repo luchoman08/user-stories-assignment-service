@@ -1,5 +1,5 @@
 import { PulpAssignmentUniqueCostResponse } from "./PulpAssignmentUniqueCostResponse";
 
-export class PulpAssignmentWithAttributesResponse extends PulpAssignmentUniqueCostResponse{
-    
+export class PulpAssignmentWithAttributesResponse extends PulpAssignmentUniqueCostResponse {
+
 }

@@ -5,7 +5,7 @@ import request from "request";
 import  {
     PulpAssignmentUniqueCost,
     PulpAssignmentUniqueCostResponse
-}  from "../models"; 
+}  from "../models";
 
 import {
     AssignmentUniqueCost
@@ -25,7 +25,7 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
     let pulpAssignmentUniqueCostResponse: PulpAssignmentUniqueCostResponse = new PulpAssignmentUniqueCostResponse();
     let assignmentUniqueCostResult: AssignmentUniqueCost = new AssignmentUniqueCost();
     pulpAssignmentUniqueCost = assignmentUniqueCostToPulpAssignmentUniqueCost(assignmentUniqueCost);
-    console.log(JSON.stringify(pulpAssignmentUniqueCost), 'asignacion unico costo de pulp');
+    console.log(JSON.stringify(pulpAssignmentUniqueCost), "asignacion unico costo de pulp");
     const options = {
         uri: base_url + "uniquecostassign/",
         method: "POST",
@@ -33,10 +33,9 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
       };
     request(options ,
         function (error: any, response: any, body: any) {
-        if (response.statusCode>201) {
+        if (response.statusCode > 201) {
         callback(body);
-        } else {
-		if ( body ) {
+        } else if ( body ) {
         pulpAssignmentUniqueCostResponse = body as PulpAssignmentUniqueCostResponse;
         assignmentUniqueCostResult =
             pulpAssignmentUniqueCostResponseToassignementUniqueCost(
@@ -46,7 +45,6 @@ function getAssignmentUniqueCost (assignmentUniqueCost: AssignmentUniqueCost, ca
         }
         else {
         callback(error);
-        }
         }
         });
     }

@@ -2,26 +2,27 @@
 import { Request, Response } from "express";
 import request from "request";
 
-
-import  {
+import {
     PulpAssignmentTaskGroups,
     PulpAssignmentTaskGroupsResponse
-}  from "../models"; 
+} from "../models";
 
 import {
     AssignmentByUserStoryGroups
 } from "../../models";
+
 import { config } from "../conf";
+
 import {
     assignmentByUserStoryGroupsToPulpAssignmentTaskGroup,
     pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups
- } from "../lib";
+} from "../lib";
 import express from "express";
 export const router = express.Router();
 
 const base_url: string = config.taskAssignmentServiceUrl;
 
-function getAssignmentTaskGroup (assignmentTaskGroup: AssignmentByUserStoryGroups, callback: Function) {
+function getAssignmentTaskGroup(assignmentTaskGroup: AssignmentByUserStoryGroups, callback: Function) {
     let pulpAssignmentTaskGroup: PulpAssignmentTaskGroups = new PulpAssignmentTaskGroups();
     let pulpAssignmentTaskGroupResponse: PulpAssignmentTaskGroupsResponse = new PulpAssignmentTaskGroupsResponse();
     let assignmentTaskGroupResult: AssignmentByUserStoryGroups = new AssignmentByUserStoryGroups();
@@ -31,31 +32,29 @@ function getAssignmentTaskGroup (assignmentTaskGroup: AssignmentByUserStoryGroup
         uri: base_url + "groupassign/",
         method: "POST",
         json: pulpAssignmentTaskGroup
-      };
-    request(options ,
+    };
+    request(options,
         function (error: any, response: any, body: any) {
-        if (response.statusCode>201) {
-        callback(body);
-        } else {
-		if ( body ) {
-        pulpAssignmentTaskGroupResponse = body as PulpAssignmentTaskGroupsResponse;
-        assignmentTaskGroupResult =
-            pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups(
-                pulpAssignmentTaskGroupResponse,
-                assignmentTaskGroup);
-        callback(assignmentTaskGroupResult);
-        }
-        else {
-        callback(error);
-        }
-        }
+            if (response.statusCode > 201) {
+                callback(body);
+            } else if (body) {
+                pulpAssignmentTaskGroupResponse = body as PulpAssignmentTaskGroupsResponse;
+                assignmentTaskGroupResult =
+                    pulpAssignmentTaskGroupResponseToAssignmentByUserStoryGroups(
+                        pulpAssignmentTaskGroupResponse,
+                        assignmentTaskGroup);
+                callback(assignmentTaskGroupResult);
+            }
+            else {
+                callback(error);
+            }
         });
-    }
+}
 
 
 router.post("/",
     function (req: Request, res: Response) {
-        getAssignmentTaskGroup (req.body as AssignmentByUserStoryGroups,
+        getAssignmentTaskGroup(req.body as AssignmentByUserStoryGroups,
             function (assignmentTaskGroup: AssignmentByUserStoryGroups) {
                 res.json(assignmentTaskGroup);
             }
